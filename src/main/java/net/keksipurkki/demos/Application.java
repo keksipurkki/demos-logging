@@ -11,6 +11,8 @@ import io.vertx.tracing.opentelemetry.OpenTelemetryOptions;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Scanner;
+
 @Slf4j
 @ToString
 public class Application extends AbstractVerticle implements Handler<RoutingContext> {
@@ -41,6 +43,11 @@ public class Application extends AbstractVerticle implements Handler<RoutingCont
     }
 
     @Override
+    public void stop() throws Exception {
+        log.info("Stopping {}", this);
+    }
+
+    @Override
     public void handle(RoutingContext rc) {
 
         log.info("Handling request. Method = {}. URI = {}", rc.request().method(), rc.request().absoluteURI());
@@ -51,6 +58,8 @@ public class Application extends AbstractVerticle implements Handler<RoutingCont
     }
 
     public static void main(String... args) {
+
+        log.info("Starting {}", Main.class);
         var sdkTracerProvider = SdkTracerProvider.builder().build();
 
         var openTelemetry = OpenTelemetrySdk.builder()
@@ -65,6 +74,11 @@ public class Application extends AbstractVerticle implements Handler<RoutingCont
 
         vertx.deployVerticle(new Application());
 
+        var console = new Scanner(System.in);
+        while (console.hasNext()) {
+        }
+        vertx.close();
     }
+
 
 }
