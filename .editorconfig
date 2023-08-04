@@ -1,0 +1,25 @@
+# Sample editorconfig file
+# brew install editorconfig
+
+root = true
+
+[*]
+max_line_length = 80
+indent_style = space
+indent_size = 2
+
+[Makefile]
+indent_style = tab
+
+[*.html]
+max_line_length = 150
+
+[*.js]
+indent_style = space
+
+[*.java]
+max_line_length = 120
+indent_size = 4
+
+[*.xml]
+max_line_length = off

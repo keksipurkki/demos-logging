@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+
+<configuration>
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+  <logger name="io.vertx" level="INFO"/>
+  <logger name="io.netty" level="ERROR"/>
+
+  <conversionRule conversionWord="trace"
+                  converterClass="net.keksipurkki.demos.logging.OpenTelemetry"/>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+      <layout class="net.keksipurkki.demos.logging.JsonLineLayout">
+        <!--<layout class="ch.qos.logback.classic.PatternLayout">-->
+        <pattern>%trace{traceId} %trace{spanId} %date{yyyy-MM-dd'T'HH:mm:ssXXX,Europe/Helsinki} %logger %level %message %ex{short} %n</pattern>
+        <prettyPrint>${app.logs.prettyPrint:-true}</prettyPrint>
+      </layout>
+    </encoder>
+  </appender>
+
+  <root level="${app.logs.logLevel:-DEBUG}">
+    <appender-ref ref="${app.logs.appender:-STDOUT}"/>
+  </root>
+
+</configuration>
