@@ -7,7 +7,7 @@ import io.opentelemetry.api.trace.Span;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class OpenTelemetry extends ClassicConverter implements JsonLineKey {
+public class OpenTelemetryConverter extends ClassicConverter implements JsonLineKey {
 
     final private Map<String, Supplier<String>> suppliers = Map.of(
         "spanId", this::getSpanId,

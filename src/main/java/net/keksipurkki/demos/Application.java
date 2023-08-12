@@ -1,17 +1,13 @@
 package net.keksipurkki.demos;
 
-import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
-import io.opentelemetry.context.propagation.ContextPropagators;
-import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.vertx.core.*;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.tracing.opentelemetry.OpenTelemetryOptions;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Scanner;
 
 @Slf4j
 @ToString
@@ -56,29 +52,5 @@ public class Application extends AbstractVerticle implements Handler<RoutingCont
             rc.json(m.body());
         });
     }
-
-    public static void main(String... args) {
-
-        log.info("Starting {}", Main.class);
-        var sdkTracerProvider = SdkTracerProvider.builder().build();
-
-        var openTelemetry = OpenTelemetrySdk.builder()
-            .setTracerProvider(sdkTracerProvider)
-            .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
-            .buildAndRegisterGlobal();
-
-        var opts = new VertxOptions()
-            .setTracingOptions(new OpenTelemetryOptions(openTelemetry));
-
-        var vertx = Vertx.vertx(opts);
-
-        vertx.deployVerticle(new Application());
-
-        var console = new Scanner(System.in);
-        while (console.hasNext()) {
-        }
-        vertx.close();
-    }
-
 
 }

@@ -13,7 +13,7 @@ import static net.keksipurkki.demos.logging.JsonLineLayout.JSON_MESSAGE;
 @ToString
 public class HelloWorld extends AbstractVerticle {
 
-    private static Logger log = LoggerFactory.getLogger(HelloWorld.class);
+    private static final Logger log = LoggerFactory.getLogger(HelloWorld.class);
 
     @Override
     public void start(Promise<Void> startPromise) throws Exception {
@@ -24,12 +24,12 @@ public class HelloWorld extends AbstractVerticle {
 
     private Future<JsonObject> helloWorld() {
         var resp = new JsonObject()
-            .put("message", "Hello world!");
+                .put("message", "Hello world!");
 
         var promise = Promise.<JsonObject>promise();
 
         vertx.setTimer(500L, l -> {
-            log.info(JSON_MESSAGE, resp.toString());
+            log.info(JSON_MESSAGE, resp.encode());
             promise.complete(resp);
         });
 

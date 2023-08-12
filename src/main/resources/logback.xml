@@ -8,13 +8,12 @@
   <logger name="io.netty" level="ERROR"/>
 
   <conversionRule conversionWord="trace"
-                  converterClass="net.keksipurkki.demos.logging.OpenTelemetry"/>
+                  converterClass="net.keksipurkki.demos.logging.OpenTelemetryConverter"/>
 
   <appender name="JsonLines" class="ch.qos.logback.core.ConsoleAppender">
     <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
       <layout class="net.keksipurkki.demos.logging.JsonLineLayout">
-        <!--<layout class="ch.qos.logback.classic.PatternLayout">-->
-        <pattern>%trace{traceId} %trace{spanId} %date{yyyy-MM-dd'T'HH:mm:ssXXX,Europe/Helsinki} %logger %level %message %ex{short} %n</pattern>
+        <pattern>%trace{traceId} %trace{spanId} %date{yyyy-MM-dd'T'HH:mm:ssXXX,Europe/Helsinki} %logger %highlight(%level) %message %ex{short} %n</pattern>
         <prettyPrint>${app.logs.prettyPrint:-true}</prettyPrint>
       </layout>
     </encoder>
@@ -24,10 +23,19 @@
     <encoder class="ch.qos.logback.classic.encoder.JsonEncoder"/>
   </appender>
 
+  <appender name="JsonLinesContrib" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+      <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+        <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+          <prettyPrint>true</prettyPrint>
+        </jsonFormatter>
+      </layout>
+    </encoder>
+  </appender>
+
   <appender name="Traditional" class="ch.qos.logback.core.ConsoleAppender">
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <pattern>%date{yyyy-MM-dd'T'HH:mm:ssXXX,Europe/Helsinki} %logger %level %message %ex{short} %n</pattern>
-      <prettyPrint>${app.logs.prettyPrint:-true}</prettyPrint>
+      <pattern>%date %logger %highlight(%level) %message %ex{short} %n</pattern>
     </encoder>
   </appender>
 

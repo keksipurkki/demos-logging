@@ -70,6 +70,18 @@
       <version>2.0.7</version>
     </dependency>
 
+    <!-- Obsolete logback contrib -->
+    <dependency>
+      <groupId>ch.qos.logback.contrib</groupId>
+      <artifactId>logback-json-classic</artifactId>
+      <version>0.1.5</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback.contrib</groupId>
+      <artifactId>logback-jackson</artifactId>
+      <version>0.1.5</version>
+    </dependency>
+
     <!-- Annotations -->
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -100,7 +112,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>net.keksipurkki.demos.Application</mainClass>
+          <mainClass>net.keksipurkki.demos.Main</mainClass>
         </configuration>
       </plugin>
     </plugins>

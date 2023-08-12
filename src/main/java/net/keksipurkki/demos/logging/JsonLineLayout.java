@@ -2,6 +2,7 @@ package net.keksipurkki.demos.logging;
 
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.pattern.LineSeparatorConverter;
+import ch.qos.logback.classic.pattern.MessageConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.CompositeConverter;
 import ch.qos.logback.core.pattern.Converter;
@@ -13,6 +14,7 @@ import ch.qos.logback.core.status.ErrorStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.RawValue;
 import lombok.SneakyThrows;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -26,7 +28,7 @@ import static java.util.Objects.nonNull;
 
 public class JsonLineLayout extends PatternLayout {
 
-    public static Marker JSON_MESSAGE = MarkerFactory.getMarker("JSON_MESSAGE");
+    public static final Marker JSON_MESSAGE = MarkerFactory.getMarker("JSON_MESSAGE");
 
     private static final Map<String, String> CONVERTER_CLASS_TO_KEY = new HashMap<>();
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -38,8 +40,8 @@ public class JsonLineLayout extends PatternLayout {
 
         // Json arrays elements on new lines
         var prettyPrinter = new DefaultPrettyPrinter()
-                .withArrayIndenter(SYSTEM_LINEFEED_INSTANCE)
-                .withObjectIndenter(SYSTEM_LINEFEED_INSTANCE);
+            .withArrayIndenter(SYSTEM_LINEFEED_INSTANCE)
+            .withObjectIndenter(SYSTEM_LINEFEED_INSTANCE);
 
         mapper.setDefaultPrettyPrinter(prettyPrinter);
 
@@ -104,11 +106,10 @@ public class JsonLineLayout extends PatternLayout {
     }
 
     private <E> String jsonLineKey(Converter<E> converter) {
-        var leaf = leafConverter(converter);
-        if (leaf instanceof JsonLineKey jsonLineKey) {
-            return jsonLineKey.key();
+        if (converter instanceof JsonLineKey key) {
+            return key.key();
         } else {
-            return CONVERTER_CLASS_TO_KEY.get(leaf.getClass().getName());
+            return CONVERTER_CLASS_TO_KEY.get(converter.getClass().getName());
         }
     }
 
@@ -117,19 +118,26 @@ public class JsonLineLayout extends PatternLayout {
 
         for (var c = head; c != null; c = c.getNext()) {
 
-            if (c instanceof LineSeparatorConverter) {
+            var leaf = leafConverter(c);
+            var key = jsonLineKey(leaf);
+
+            if (leaf instanceof LineSeparatorConverter) {
                 continue;
             }
 
-            var key = jsonLineKey(c);
-
-            if (nonNull(key)) {
-                json.put(key, c.convert(event));
+            if (leaf instanceof MessageConverter m) {
+                var value = m.convert(event);
+                json.put(key, isJsonMessage(event) ? new RawValue(value) : value);
+                continue;
             }
 
+            if (nonNull(key)) {
+                var value = c.convert(event);
+                json.put(key, value);
+            }
         }
 
-        if (json.containsKey("throwable") && json.get("throwable") instanceof String str) {
+        if (json.get("throwable") instanceof String str) {
             if (str.isEmpty()) {
                 json.remove("throwable");
             } else {
@@ -143,6 +151,10 @@ public class JsonLineLayout extends PatternLayout {
         } else {
             return json;
         }
+    }
+
+    private boolean isJsonMessage(ILoggingEvent event) {
+        return nonNull(event.getMarkerList()) && event.getMarkerList().contains(JSON_MESSAGE);
     }
 
     private Map<String, Object> highlightKeys(Map<String, Object> json) {
