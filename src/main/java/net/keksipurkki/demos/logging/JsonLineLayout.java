@@ -81,8 +81,8 @@ public class JsonLineLayout extends PatternLayout {
         BinaryOperator<String> longerString = (a, b) -> a.length() > b.length() ? a : b;
 
         for (var entry : getEffectiveConverterMap().entrySet()) {
-            CONVERTER_CLASS_TO_KEY.putIfAbsent(entry.getValue(), entry.getKey());
-            CONVERTER_CLASS_TO_KEY.computeIfPresent(entry.getValue(), (_k, v) -> longerString.apply(v, entry.getKey()));
+            CONVERTER_CLASS_TO_KEY.putIfAbsent(entry.getValue().toString(), entry.getKey());
+            CONVERTER_CLASS_TO_KEY.computeIfPresent(entry.getValue().toString(), (_k, v) -> longerString.apply(v, entry.getKey()));
         }
 
         ConverterUtil.setContextForConverters(this.getContext(), this.head);

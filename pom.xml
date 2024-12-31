@@ -9,9 +9,9 @@
   <version>1.0-SNAPSHOT</version>
 
   <properties>
-    <maven.compiler.source>20</maven.compiler.source>
-    <maven.compiler.target>20</maven.compiler.target>
+    <maven.compiler.release>23</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.proc>full</maven.compiler.proc>
   </properties>
 
   <dependencies>
@@ -62,7 +62,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.4.8</version>
+      <version>1.5.15</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -86,21 +86,13 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.28</version>
+      <version>1.18.36</version>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
-        <configuration>
-          <source>20</source>
-          <target>20</target>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -125,21 +117,14 @@
         <artifactId>vertx-dependencies</artifactId>
         <type>pom</type>
         <scope>import</scope>
-        <version>4.4.4</version>
+        <version>4.5.11</version>
       </dependency>
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
         <type>pom</type>
         <scope>import</scope>
-        <version>5.9.3</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson</groupId>
-        <artifactId>jackson-bom</artifactId>
-        <version>2.15.2</version>
-        <type>pom</type>
-        <scope>import</scope>
+        <version>5.11.3</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
